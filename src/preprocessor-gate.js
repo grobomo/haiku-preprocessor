@@ -46,7 +46,7 @@ function preprocess(options) {
   var rulesPath = options.rulesPath || "";
 
   // Bypass: "!" prefix
-  if (prompt.trimStart().startsWith("//")) {
+  if (prompt.trimStart().startsWith("+")) {
     return { action: "pass", bypass: true };
   }
 

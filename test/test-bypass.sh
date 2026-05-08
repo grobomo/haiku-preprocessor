@@ -16,7 +16,7 @@ mkdir -p "$INSTANCE_DIR"
 RESULT=$(node -e "
 var gate = require('$SRC_DIR/preprocessor-gate');
 var result = gate.preprocess({
-  prompt: '// just do the thing',
+  prompt: '+ just do the thing',
   instanceDir: '$INSTANCE_DIR',
   rulesPath: '$RULES_FILE'
 });

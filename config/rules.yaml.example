@@ -8,7 +8,7 @@
 # To change interpretation behavior: edit "interpretation_rules:"
 # Changes take effect immediately (file is read fresh each prompt).
 #
-# BYPASS: Messages starting with "//" skip L1 entirely.
+# BYPASS: Messages starting with "+" skip L1 entirely.
 
 shorthand:
   # Add your own shorthand mappings here. Format:
