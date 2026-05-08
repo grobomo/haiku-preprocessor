@@ -1,0 +1,49 @@
+# Prompt Preprocessing Rules — L1 Haiku Triage
+# ═══════════════════════════════════════════════
+#
+# What: Haiku reads this file before every user prompt and uses it to
+#        interpret shorthand, resolve ambiguity, and enrich context.
+#
+# To add shorthand: add an entry under "shorthand:" below
+# To change interpretation behavior: edit "interpretation_rules:"
+# Changes take effect immediately (file is read fresh each prompt).
+#
+# BYPASS: Messages starting with "!" skip L1 entirely.
+
+shorthand:
+  # Add your own shorthand mappings here. Format:
+  #   - pattern: "what the user types"
+  #     means: "what it resolves to (paths, commands, descriptions)"
+  #
+  # Examples:
+  - pattern: "hook logs"
+    means: "Read ~/.claude/hooks/hook-log.jsonl — extract recent entries"
+  - pattern: "stop rules"
+    means: "~/.claude/proxy/stop-analysis-rules.yaml — the Stop hook rules"
+
+interpretation_rules:
+  - name: shorthand-resolution
+    check: "Does the prompt contain shorthand from the list above?"
+    action: "Resolve to specific paths/commands in your notes"
+
+  - name: context-from-recent
+    check: "Does the prompt reference something from a recent conversation without full context?"
+    action: "Note what it likely refers to based on conversation history"
+
+  - name: ambiguity-detection
+    check: "Could this prompt mean multiple genuinely different things?"
+    action: "If yes, list possible meanings. If one is >80% likely, pick it (medium confidence)."
+
+  - name: action-inference
+    check: "Is the user's intent clear but the specific action isn't stated?"
+    action: "Infer the most likely action (read, edit, check status, etc.) and note it"
+
+meta_rules:
+  - "Short prompts (< 5 words) usually need enrichment — check shorthand list first"
+  - "Commands/requests with clear verbs ('fix', 'add', 'delete' + specific target) are high confidence"
+  - "Questions about state ('what is', 'show me', 'check') need path resolution"
+  - "If genuinely stumped with no matching rules, block and ask — don't guess wildly"
+  - "Typos are common — 'udpate' = 'update', 'teh' = 'the', etc. Resolve silently."
+  - "Open-ended questions ('what else', 'what next') are ALWAYS high confidence — user wants the assistant to decide"
+  - "Numbered references to a previous list ('1, 2, 4') are high confidence — assistant has the list"
+  - "Confirmations with follow-up ('ok nice, thanks. X') are high confidence"

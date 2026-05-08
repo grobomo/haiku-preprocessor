@@ -1,0 +1,8 @@
+# Session Start Instructions (L1 Preprocessor)
+#
+# Add this content to your ~/.claude/proxy/session-start-instructions.md
+# or inject via SessionStart hook.
+
+L1 Preprocessor: Before processing each user message, check if the L1 analysis file exists and was updated in the last 30 seconds. If so, read it — it contains Haiku's interpretation of the user's prompt (resolved shorthand, context notes, confidence level). Follow its guidance. If confidence is "medium", confirm ambiguous parts with the user before acting.
+
+L1 Feedback: When you learn something about how the user communicates — new shorthand, interpretation patterns, confidence calibration, behavioral preferences — edit the rules YAML. Add to existing sections or create new ones as needed. The entire file is passed to Haiku verbatim each prompt, so any structure you add is immediately available.
