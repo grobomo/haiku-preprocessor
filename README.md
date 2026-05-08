@@ -7,7 +7,7 @@ A Claude Code hook that runs Haiku (or any fast LLM) on every user prompt before
 ```
 User types message
        │
-       ├── starts with "!" → BYPASS (raw to main model, no L1)
+       ├── starts with "//" → BYPASS (raw to main model, no L1)
        │
        ▼
 preprocessor-gate.js
@@ -144,7 +144,7 @@ console.log(result.ok ? result.parsed : result.error);
 
 ## Safety
 
-- **`!` bypass**: Any message starting with `!` skips L1 entirely
+- **`//` bypass**: Any message starting with `//` skips L1 entirely
 - **Timeout passthrough**: If Haiku fails or times out, prompt passes through (never blocks)
 - **Max 3 consecutive blocks**: After 3 blocks in a row, forces passthrough
 - **No secrets in code**: Auth token comes from environment at runtime
