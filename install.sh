@@ -156,31 +156,37 @@ echo "  ✓ run-userpromptsubmit-l1.js → ${RUNNER_FILE}"
 # ─── Patch settings.json ─────────────────────────────────────────────────────
 
 echo ""
-echo "Checking settings.json hook configuration..."
+echo "Configuring settings.json hook..."
 
-if [ -f "$SETTINGS_FILE" ]; then
-  if grep -q "run-userpromptsubmit-l1.js" "$SETTINGS_FILE"; then
-    echo "  ○ Hook already configured in settings.json"
-  else
-    echo "  ⚠ You need to add the UserPromptSubmit hook to ${SETTINGS_FILE}"
-    echo "    Add this to the 'hooks' section:"
-    echo ""
-    echo '    "UserPromptSubmit": ['
-    echo '      {'
-    echo '        "hooks": ['
-    echo '          {'
-    echo '            "type": "command",'
-    echo '            "command": "node \"$HOME/.claude/hooks/run-userpromptsubmit-l1.js\"",'
-    echo '            "timeout": 20'
-    echo '          }'
-    echo '        ]'
-    echo '      }'
-    echo '    ]'
-    echo ""
-  fi
+if [ ! -f "$SETTINGS_FILE" ]; then
+  # Create minimal settings.json
+  echo '{"hooks":{}}' > "$SETTINGS_FILE"
+  echo "  ✓ Created ${SETTINGS_FILE}"
+fi
+
+if grep -q "run-userpromptsubmit-l1.js" "$SETTINGS_FILE"; then
+  echo "  ○ Hook already configured in settings.json"
 else
-  echo "  ⚠ No settings.json found at ${SETTINGS_FILE}"
-  echo "    Create one with the hook configuration above."
+  # Auto-patch: add UserPromptSubmit hook using node (safe JSON manipulation)
+  node -e "
+    var fs = require('fs');
+    var settings = JSON.parse(fs.readFileSync('$SETTINGS_FILE', 'utf-8'));
+    if (!settings.hooks) settings.hooks = {};
+    settings.hooks.UserPromptSubmit = [{
+      hooks: [{
+        type: 'command',
+        command: 'node \"\$HOME/.claude/hooks/run-userpromptsubmit-l1.js\"',
+        timeout: 20
+      }]
+    }];
+    fs.writeFileSync('$SETTINGS_FILE', JSON.stringify(settings, null, 2));
+  "
+  if [ $? -eq 0 ]; then
+    echo "  ✓ UserPromptSubmit hook added to settings.json"
+  else
+    echo "  ✗ Failed to patch settings.json — add manually:"
+    echo '    "UserPromptSubmit": [{"hooks":[{"type":"command","command":"node \"\$HOME/.claude/hooks/run-userpromptsubmit-l1.js\"","timeout":20}]}]'
+  fi
 fi
 
 # ─── Install Cron ─────────────────────────────────────────────────────────────

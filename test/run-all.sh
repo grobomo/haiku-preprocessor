@@ -31,7 +31,7 @@ echo "Endpoint: ${HAIKU_ENDPOINT_URL:-http://127.0.0.1:4100/v1/chat/completions}
 echo ""
 
 run_test "haiku-client basic call" "$SCRIPT_DIR/test-haiku-client.sh"
-run_test "bypass (! prefix)" "$SCRIPT_DIR/test-bypass.sh"
+run_test "bypass (+ prefix)" "$SCRIPT_DIR/test-bypass.sh"
 run_test "shorthand resolution" "$SCRIPT_DIR/test-shorthand.sh"
 run_test "conversational (high conf)" "$SCRIPT_DIR/test-conversational.sh"
 run_test "gibberish (low conf/block)" "$SCRIPT_DIR/test-block.sh"
